@@ -4,6 +4,8 @@ import { Raw, Repository } from 'typeorm';
 import { CreateRubroDto } from './dto/create-rubro.dto';
 import { UpdateRubroDto } from './dto/update-rubro.dto';
 import { Rubro } from './entities/rubro.entity';
+import { plainToInstance } from 'class-transformer';
+import { ResponseRubroDto } from './dto/response-rubro.dto';
 
 @Injectable()
 export class RubrosService {
@@ -19,7 +21,10 @@ export class RubrosService {
   }
 
   findAll() {
-    return this.rubroRepository.find();
+    const rubros = this.rubroRepository.find();
+    return plainToInstance(ResponseRubroDto, rubros, {
+      excludeExtraneousValues: true,
+    });
   }
 
   findByName(descripcion: string) {
