@@ -26,9 +26,31 @@ export class CursorPaginationDto {
   limit: number;
 }
 
-export class PaginatedCatalogResponseDto {
+export class NormalPaginationDto {
+  @ApiProperty()
+  page: number;
+  @ApiProperty()
+  take: number;
+  @ApiProperty()
+  total: number;
+  @ApiProperty()
+  totalPages: number;
+  @ApiProperty()
+  hasNextPage: boolean;
+  @ApiProperty()
+  hasPreviousPage: boolean;
+}
+
+export class PaginatedProductsCursorResponseDto {
   @ApiProperty({ type: [CatalogResponseDto] })
   items: CatalogResponseDto[];
-  @ApiProperty()
+  @ApiProperty({ type: CursorPaginationDto })
   pagination: CursorPaginationDto;
+}
+
+export class PaginatedProductsNormalResponseDto {
+  @ApiProperty({ type: [CatalogResponseDto] })
+  items: CatalogResponseDto[];
+  @ApiProperty({ type: NormalPaginationDto })
+  pagination: NormalPaginationDto;
 }
