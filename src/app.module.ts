@@ -5,7 +5,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { RubrosModule } from './modules/rubros/rubros.module';
-
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { FilesModule } from './modules/files/files.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -17,6 +18,8 @@ import { RubrosModule } from './modules/rubros/rubros.module';
     }),
     ProductsModule,
     RubrosModule,
+    CloudinaryModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
