@@ -1,15 +1,59 @@
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+  Max,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
+
 export class CreateProductDto {
+  @ApiProperty()
+  @IsNumber()
+  @IsInt()
+  @IsPositive()
+  @Max(99)
   idRubro: number;
+
+  @ApiProperty()
+  @IsString()
+  @MaxLength(60)
+  @MinLength(2)
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   descripcion: string;
-  codigoAux?: string;
-  tipoArticulo?: number;
-  unidadMedida: string;
-  manejaStock: string;
-  stockActual: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @Max(999999999999.99)
   precioVenta: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @Max(100)
   alicuotaIVA: number;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @Max(999999999999.99)
   costoNeto: number;
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: 'string', format: 'binary', required: false })
   imagen?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(80)
+  @ApiPropertyOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   detalle1?: string;
-  fechaAlta: Date;
 }

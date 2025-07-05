@@ -37,13 +37,13 @@ export class Product {
   @Column('int', { name: 'NUMERO', nullable: true })
   numero: number;
 
-  @Column({ name: 'UMEDIDA', length: 4 })
+  @Column({ name: 'UMEDIDA', length: 4, default: 'UNID' })
   unidadMedida: string;
 
-  @Column({ name: 'STOCKSINO', length: 1, type: 'varchar' })
+  @Column({ name: 'STOCKSINO', length: 1, type: 'varchar', default: 'S' })
   manejaStock: string;
 
-  @Column('decimal', { name: 'STOCKACT', precision: 12, scale: 4 })
+  @Column('decimal', { name: 'STOCKACT', precision: 12, scale: 4, default: 0 })
   stockActual: number;
 
   @Column('decimal', {
@@ -65,7 +65,7 @@ export class Product {
   @Column('decimal', { name: 'PCIOVENTA', precision: 12, scale: 4 })
   precioVenta: number;
 
-  @Column('decimal', { name: 'ALICIVA', precision: 7, scale: 4 })
+  @Column('decimal', { name: 'ALICIVA', precision: 7, scale: 4, default: 21.0 })
   alicuotaIVA: number;
 
   @Column('decimal', {
@@ -134,7 +134,7 @@ export class Product {
   })
   tasaVial: number;
 
-  @Column('date', { name: 'FEALTA' })
+  @Column('date', { name: 'FEALTA', default: () => 'CURRENT_DATE' })
   fechaAlta: Date;
 
   @Column('boolean', { name: 'ENLIQUIDA', nullable: true })

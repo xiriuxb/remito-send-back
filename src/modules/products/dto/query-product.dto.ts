@@ -39,22 +39,26 @@ export class QueryCatalogProductDto {
 }
 
 export class QueryProductDto {
+  @ApiProperty({ required: false })
   @IsString()
   @MinLength(2)
   @IsOptional()
   @MaxLength(60)
   description?: string;
+  @ApiProperty({ required: false })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @Max(99)
   rubro?: number;
+  @ApiProperty({ required: false })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   page?: number;
+  @ApiProperty({ required: false })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
