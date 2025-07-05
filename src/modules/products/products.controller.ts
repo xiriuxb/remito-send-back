@@ -11,7 +11,6 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
-  FileTypeValidator,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -38,10 +37,7 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 10000 }),
-          new FileTypeValidator({ fileType: '.(jpg|jpeg|png)' }),
-        ],
+        validators: [new MaxFileSizeValidator({ maxSize: 10000 })],
       }),
     )
     file: Express.Multer.File,
@@ -80,10 +76,7 @@ export class ProductsController {
     @Param('id') id: string,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: 10000 }),
-          new FileTypeValidator({ fileType: '.(jpg|jpeg|png)' }),
-        ],
+        validators: [new MaxFileSizeValidator({ maxSize: 10000 })],
       }),
     )
     file: Express.Multer.File,
