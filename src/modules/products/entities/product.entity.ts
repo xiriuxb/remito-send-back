@@ -1,5 +1,13 @@
-import { Entity, Column, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
 import { Rubro } from '../../rubros/entities/rubro.entity';
+import { PedidoArticulo } from 'src/modules/pedidos/entities/pedido_articulos.entity';
 
 @Entity('articulos')
 export class Product {
@@ -139,4 +147,12 @@ export class Product {
 
   @Column('boolean', { name: 'ENLIQUIDA', nullable: true })
   enLiquidacion: boolean;
+
+  //RELACIONES
+  @OneToMany(
+    () => PedidoArticulo,
+    (pedidoArticulo) => pedidoArticulo.articulo,
+    { cascade: true },
+  )
+  pedidosArticulo: PedidoArticulo[];
 }

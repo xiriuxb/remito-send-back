@@ -6,7 +6,14 @@ import {
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository, MoreThan, FindOptionsWhere, Raw } from 'typeorm';
+import {
+  ILike,
+  Repository,
+  MoreThan,
+  FindOptionsWhere,
+  Raw,
+  In,
+} from 'typeorm';
 import { Product } from './entities/product.entity';
 import { plainToInstance } from 'class-transformer';
 import { CatalogResponseDto } from './dto/catalog-response.dto';
@@ -226,6 +233,15 @@ export class ProductsService {
     }
     await this._prodRepository.delete({ idArticulo: id });
     return { ok: true };
+  }
+
+  async validateIdsExist(ids: string[]) {
+    const products = await this._prodRepository.find({
+      where: { idArticulo: In(ids) },
+      select: { idArticulo: true },
+    });
+
+    return products;
   }
 
   async generateNextProductId(): Promise<string> {
