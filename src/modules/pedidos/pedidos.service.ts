@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository, FindOptionsWhere } from 'typeorm';
 import { CreatePedidoDto, ProductPedido } from './dto/create-pedido.dto';
@@ -95,8 +99,27 @@ export class PedidosService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pedido`;
+  async findOne(id: number) {
+    const pedido = await this._pedidoRepository.findOne({
+      where: { idPedido: id },
+      relations: ['productos'],
+      select: {
+        idPedido: true,
+        clientName: true,
+        fechaPedido: true,
+        observation: true,
+        seen: true,
+        status: true,
+        productos: {
+          idArticulo: true,
+          cantidad: true,
+          articulo: true,
+          observation: true,
+        },
+      },
+    });
+    if (!pedido) throw new NotFoundException('Pedido no encontrado');
+    return pedido;
   }
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
