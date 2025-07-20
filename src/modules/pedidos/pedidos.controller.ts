@@ -6,10 +6,12 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { QueryPedidoDto } from './dto/get-query.dto';
 
 @Controller('pedidos')
 export class PedidosController {
@@ -21,8 +23,8 @@ export class PedidosController {
   }
 
   @Get()
-  findAll() {
-    return this.pedidosService.findAll();
+  findAll(@Query() dto: QueryPedidoDto) {
+    return this.pedidosService.findAllList(dto);
   }
 
   @Get(':id')
