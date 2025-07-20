@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { RubrosModule } from './modules/rubros/rubros.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { FilesModule } from './modules/files/files.module';
+import { PedidosModule } from './modules/pedidos/pedidos.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -20,6 +21,7 @@ import { FilesModule } from './modules/files/files.module';
     RubrosModule,
     CloudinaryModule,
     FilesModule,
+    PedidosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

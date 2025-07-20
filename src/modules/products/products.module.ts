@@ -9,5 +9,6 @@ import { FilesModule } from '../files/files.module';
   imports: [TypeOrmModule.forFeature([Product]), FilesModule],
   controllers: [ProductsController],
   providers: [ProductsService],
+  exports: [ProductsService],
 })
 export class ProductsModule {}
