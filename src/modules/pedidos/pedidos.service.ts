@@ -122,7 +122,16 @@ export class PedidosService {
     return pedido;
   }
 
+  async validateExistsOrThrow(pedidoId: number) {
+    const pedido = await this._pedidoRepository.exists({
+      where: { idPedido: pedidoId },
+    });
+    if (!pedido) throw new NotFoundException('Pedido no encontrado');
+    return;
+  }
+
   async updateSeen(id: number, dto: UpdateSeenPedidoDto) {
+    await this.validateExistsOrThrow(id);
     await this._pedidoRepository.update({ idPedido: id }, { seen: dto.seen });
     return { ok: true };
   }
