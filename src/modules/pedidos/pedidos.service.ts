@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository, FindOptionsWhere } from 'typeorm';
 import { CreatePedidoDto, ProductPedido } from './dto/create-pedido.dto';
-import { UpdatePedidoDto } from './dto/update-pedido.dto';
+import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
 import { ProductsService } from '../products/products.service';
 import { Pedido } from './entities/pedido.entity';
 import { QueryPedidoDto } from './dto/get-query.dto';
@@ -120,6 +120,11 @@ export class PedidosService {
     });
     if (!pedido) throw new NotFoundException('Pedido no encontrado');
     return pedido;
+  }
+
+  async updateSeen(id: number, dto: UpdateSeenPedidoDto) {
+    await this._pedidoRepository.update({ idPedido: id }, { seen: dto.seen });
+    return { ok: true };
   }
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
