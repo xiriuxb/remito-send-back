@@ -19,7 +19,7 @@ export class Pedido {
   observation?: string;
 
   @Column('varchar', { name: 'ESTADO', nullable: true, length: 32 })
-  estado: string;
+  status: string;
 
   @Column('bool', { name: 'SEEN', nullable: false, default: false })
   seen: boolean;

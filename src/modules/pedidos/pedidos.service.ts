@@ -1,10 +1,11 @@
 import { ConflictException, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ILike, Repository, FindOptionsWhere } from 'typeorm';
 import { CreatePedidoDto, ProductPedido } from './dto/create-pedido.dto';
 import { UpdatePedidoDto } from './dto/update-pedido.dto';
 import { ProductsService } from '../products/products.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Pedido } from './entities/pedido.entity';
-import { Repository } from 'typeorm';
+import { QueryPedidoDto } from './dto/get-query.dto';
 
 @Injectable()
 export class PedidosService {
@@ -14,8 +15,16 @@ export class PedidosService {
     private readonly _prodService: ProductsService,
   ) {}
 
+  private whereBuilder(queryDto: QueryPedidoDto): FindOptionsWhere<Pedido> {
+    const whereConditions: FindOptionsWhere<Pedido> = {
+      clientName: queryDto.client ? ILike(`%${queryDto.client}%`) : undefined,
+      seen: typeof queryDto.seen == 'boolean' ? queryDto.seen : undefined,
+    };
+
+    return whereConditions;
+  }
+
   async create(dto: CreatePedidoDto) {
-    console.log(dto);
     this.throwIfDuplicates(dto.products);
     await this.validateProducts(dto.products);
 
@@ -23,7 +32,7 @@ export class PedidosService {
       clientName: dto.clientName,
       fechaPedido: dto.fechaAlta,
       productos: dto.products,
-      estado: 'PENDIENTE',
+      status: 'PENDIENTE',
       observation: dto.observation,
     });
 
@@ -49,8 +58,41 @@ export class PedidosService {
     return;
   }
 
-  findAll() {
-    return `This action returns all pedidos`;
+  async findAllList(queryDto: QueryPedidoDto) {
+    const take = queryDto.take || 50;
+    const page = queryDto.page || 1;
+    const skip = (page - 1) * take;
+    const whereConditions = this.whereBuilder(queryDto);
+
+    const [pedidos, total] = await this._pedidoRepository.findAndCount({
+      order: { fechaPedido: 'DESC' },
+      where: whereConditions,
+      select: {
+        idPedido: true,
+        clientName: true,
+        fechaPedido: true,
+        seen: true,
+        status: true,
+      },
+      skip,
+      take,
+    });
+
+    const totalPages = Math.ceil(total / take);
+    const hasNextPage = page < totalPages;
+    const hasPreviousPage = page > 1;
+
+    return {
+      items: pedidos,
+      pagination: {
+        page,
+        take,
+        total,
+        totalPages,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    };
   }
 
   findOne(id: number) {
@@ -58,6 +100,7 @@ export class PedidosService {
   }
 
   update(id: number, updatePedidoDto: UpdatePedidoDto) {
+    console.log(updatePedidoDto);
     return `This action updates a #${id} pedido`;
   }
 
