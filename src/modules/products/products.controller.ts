@@ -37,7 +37,7 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 10000 })],
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 })],
       }),
     )
     file: Express.Multer.File,
@@ -76,7 +76,7 @@ export class ProductsController {
     @Param('id') id: string,
     @UploadedFile(
       new ParseFilePipe({
-        validators: [new MaxFileSizeValidator({ maxSize: 10000 })],
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 })],
       }),
     )
     file: Express.Multer.File,

@@ -14,7 +14,7 @@ export class FilesService {
     fileName?: string,
   ): Promise<string> {
     const name = fileName ? fileName : `${Date.now()}-${file.originalname}`;
-    return this.storageService.upload(file, name);
+    return await this.storageService.upload(file, name);
   }
 
   validateImage(file: Express.Multer.File) {
