@@ -213,6 +213,7 @@ export class ProductsService {
     await this._prodRepository.update(id, {
       imagen: newImage.imageUrl,
     });
+    return { ok: true };
   }
 
   private async findByName(descripcion: string) {
