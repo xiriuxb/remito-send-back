@@ -10,6 +10,8 @@ import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
 import { ProductsService } from '../products/products.service';
 import { Pedido } from './entities/pedido.entity';
 import { QueryPedidoDto } from './dto/get-query.dto';
+import { plainToInstance } from 'class-transformer';
+import { ReturnOneAppPedidoDto } from './dto/return-pedido.dto';
 
 @Injectable()
 export class PedidosService {
@@ -102,7 +104,7 @@ export class PedidosService {
   async findOne(id: number) {
     const pedido = await this._pedidoRepository.findOne({
       where: { idPedido: id },
-      relations: ['productos'],
+      relations: ['productos', 'productos.articulo'],
       select: {
         idPedido: true,
         clientName: true,
@@ -113,13 +115,15 @@ export class PedidosService {
         productos: {
           idArticulo: true,
           cantidad: true,
-          articulo: true,
+          articulo: {
+            descripcion: true,
+          },
           observation: true,
         },
       },
     });
     if (!pedido) throw new NotFoundException('Pedido no encontrado');
-    return pedido;
+    return plainToInstance(ReturnOneAppPedidoDto, pedido);
   }
 
   async validateExistsOrThrow(pedidoId: number) {
