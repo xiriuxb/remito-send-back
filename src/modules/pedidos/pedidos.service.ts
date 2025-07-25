@@ -32,7 +32,7 @@ export class PedidosService {
     this.throwIfDuplicates(dto.products);
     await this.validateProducts(dto.products);
 
-    await this._pedidoRepository.save({
+    const newPedido = await this._pedidoRepository.save({
       clientName: dto.clientName,
       fechaPedido: dto.fechaAlta,
       productos: dto.products,
@@ -40,7 +40,7 @@ export class PedidosService {
       observation: dto.observation,
     });
 
-    return { ok: true };
+    return { id: newPedido.idPedido };
   }
 
   private throwIfDuplicates(products: ProductPedido[]) {
