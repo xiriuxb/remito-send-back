@@ -32,6 +32,7 @@ export class PedidosService {
 
   async create(dto: CreatePedidoDto) {
     this.throwIfDuplicates(dto.products);
+    await this.validateFrontIdOrThrow(dto.frontId);
     await this.validateProducts(dto.products);
 
     const newPedido = await this._pedidoRepository.save({
@@ -40,6 +41,7 @@ export class PedidosService {
       productos: dto.products,
       status: 'PENDIENTE',
       observation: dto.observation,
+      frontId: dto.frontId,
     });
 
     return { id: newPedido.idPedido };
@@ -131,6 +133,16 @@ export class PedidosService {
       where: { idPedido: pedidoId },
     });
     if (!pedido) throw new NotFoundException('Pedido no encontrado');
+    return;
+  }
+
+  async validateFrontIdOrThrow(frontId?: string) {
+    if (!frontId) return;
+    const pedido = await this._pedidoRepository.findOne({
+      where: { frontId },
+    });
+    if (pedido)
+      throw new ConflictException('Ya existe un pedido con ese ID de front');
     return;
   }
 

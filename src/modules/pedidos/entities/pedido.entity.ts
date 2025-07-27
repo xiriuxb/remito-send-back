@@ -6,6 +6,14 @@ export class Pedido {
   @PrimaryGeneratedColumn({ name: 'IDPEDIDO', type: 'int' })
   idPedido: number;
 
+  @Column('varchar', {
+    name: 'IDFRONT',
+    nullable: true,
+    length: 36,
+    unique: true,
+  })
+  frontId?: string;
+
   @Column('varchar', { name: 'CLIENTNAME', nullable: false, length: 128 })
   clientName: string;
 

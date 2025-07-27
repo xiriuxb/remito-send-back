@@ -3,9 +3,11 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsInt,
   IsISO8601,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsPositive,
+  IsString,
   Max,
   MaxLength,
   MinLength,
@@ -54,4 +56,12 @@ export class CreatePedidoDto {
   @ApiProperty({ example: new Date() })
   @IsISO8601()
   fechaAlta: string;
+
+  @ApiProperty()
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(36)
+  @Transform(({ value }) => value?.trim())
+  frontId?: string;
 }
