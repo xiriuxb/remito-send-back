@@ -57,11 +57,18 @@ export class CreatePedidoDto {
   @IsISO8601()
   fechaAlta: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(36)
   @Transform(({ value }) => value?.trim())
   frontId?: string;
+}
+
+export class CreateManyDto {
+  @ApiProperty({ type: [CreatePedidoDto] })
+  @ValidateNested({ each: true })
+  @Type(() => CreatePedidoDto)
+  pedidos: CreatePedidoDto[];
 }

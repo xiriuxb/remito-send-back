@@ -13,6 +13,9 @@ import { Transform } from 'class-transformer';
 
 export class CreateProductDto {
   @ApiProperty()
+  @Transform(({ value }) => {
+    return typeof value === 'string' ? parseInt(value, 10) : value;
+  })
   @IsNumber()
   @IsInt()
   @IsPositive()
@@ -29,18 +32,27 @@ export class CreateProductDto {
   descripcion: string;
 
   @ApiProperty()
+  @Transform(({ value }) => {
+    return typeof value === 'string' ? parseFloat(value) : value;
+  })
   @IsNumber()
   @IsPositive()
   @Max(999999999999.99)
   precioVenta: number;
 
   @ApiProperty()
+  @Transform(({ value }) => {
+    return typeof value === 'string' ? parseFloat(value) : value;
+  })
   @IsNumber()
   @IsPositive()
   @Max(100)
   alicuotaIVA: number;
 
   @ApiProperty()
+  @Transform(({ value }) => {
+    return typeof value === 'string' ? parseFloat(value) : value;
+  })
   @IsNumber()
   @IsPositive()
   @Max(999999999999.99)
