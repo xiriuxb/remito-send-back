@@ -32,6 +32,7 @@ export class ProductsService {
     descripcion: true,
     precioVenta: true,
     imagen: true,
+    fechaAlta: true,
   };
 
   constructor(
@@ -129,7 +130,7 @@ export class ProductsService {
     const [products, total] = await this._prodRepository.findAndCount({
       relations: ['rubro'],
       where: whereConditions,
-      order: { idArticulo: 'ASC' },
+      order: { fechaAlta: 'DESC' },
       select: this.publicSelectFields,
       skip,
       take,
@@ -160,7 +161,7 @@ export class ProductsService {
     const products = await this._prodRepository.find({
       relations: ['rubro'],
       where: whereConditions,
-      order: { idArticulo: 'ASC' },
+      order: { fechaAlta: 'DESC' },
       select: this.publicSelectFields,
       take: limit + 1,
     });
