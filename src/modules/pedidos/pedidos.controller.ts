@@ -9,7 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
-import { CreatePedidoDto } from './dto/create-pedido.dto';
+import { CreateManyDto, CreatePedidoDto } from './dto/create-pedido.dto';
 import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
 import { QueryPedidoDto } from './dto/get-query.dto';
 
@@ -20,6 +20,11 @@ export class PedidosController {
   @Post()
   create(@Body() createPedidoDto: CreatePedidoDto) {
     return this.pedidosService.create(createPedidoDto);
+  }
+
+  @Post('/many')
+  createMany(@Body() dto: CreateManyDto) {
+    return this.pedidosService.createMany(dto);
   }
 
   @Get()

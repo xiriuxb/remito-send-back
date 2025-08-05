@@ -1,11 +1,16 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository, FindOptionsWhere } from 'typeorm';
-import { CreatePedidoDto, ProductPedido } from './dto/create-pedido.dto';
+import { ILike, Repository, FindOptionsWhere, In } from 'typeorm';
+import {
+  CreateManyDto,
+  CreatePedidoDto,
+  ProductPedido,
+} from './dto/create-pedido.dto';
 import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
 import { ProductsService } from '../products/products.service';
 import { Pedido } from './entities/pedido.entity';
@@ -35,16 +40,54 @@ export class PedidosService {
     await this.validateFrontIdOrThrow(dto.frontId);
     await this.validateProducts(dto.products);
 
-    const newPedido = await this._pedidoRepository.save({
+    const newPedido = await this._pedidoRepository.save(this.mapDto(dto));
+
+    return { id: newPedido.idPedido };
+  }
+
+  async createMany(createProductDtos: CreateManyDto) {
+    if (createProductDtos.pedidos.length > 32) {
+      throw new BadRequestException(
+        'No se pueden crear más de 32 pedidos a la vez',
+      );
+    }
+    const uniqueIncoming = Array.from(
+      new Map(
+        createProductDtos.pedidos.map((obj) => [obj.frontId, obj]),
+      ).values(),
+    );
+
+    const existing = await this._pedidoRepository.find({
+      where: {
+        frontId: In(uniqueIncoming.map((p) => p.frontId)),
+      },
+      select: { frontId: true, idPedido: true },
+    });
+
+    const existingCodes = new Set(existing.map((e) => e.frontId));
+    const toCreate = uniqueIncoming
+      .filter((obj) => !existingCodes.has(obj.frontId))
+      .map((el) => {
+        return this.mapDto(el);
+      });
+    const created = await this._pedidoRepository.save(toCreate);
+    return [
+      ...existing,
+      ...created.map((c) => {
+        return { idPedido: c.idPedido, frontId: c.frontId };
+      }),
+    ];
+  }
+
+  private mapDto(dto: CreatePedidoDto) {
+    return {
       clientName: dto.clientName,
       fechaPedido: dto.fechaAlta,
       productos: dto.products,
       status: 'PENDIENTE',
       observation: dto.observation,
       frontId: dto.frontId,
-    });
-
-    return { id: newPedido.idPedido };
+    };
   }
 
   private throwIfDuplicates(products: ProductPedido[]) {
