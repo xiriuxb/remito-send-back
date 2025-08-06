@@ -58,12 +58,11 @@ export class CreatePedidoDto {
   fechaAlta: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
   @IsString()
   @IsNotEmpty()
   @MaxLength(36)
   @Transform(({ value }) => value?.trim())
-  frontId?: string;
+  frontId: string;
 }
 
 export class CreateManyDto {
