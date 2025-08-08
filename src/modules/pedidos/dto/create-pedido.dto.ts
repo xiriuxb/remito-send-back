@@ -33,6 +33,12 @@ export class ProductPedido {
   @MaxLength(512)
   @Transform(({ value }) => value?.trim())
   observation?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsPositive()
+  @Max(9999999999.99)
+  precio: number = 0;
 }
 
 export class CreatePedidoDto {

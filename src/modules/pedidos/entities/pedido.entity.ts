@@ -32,6 +32,15 @@ export class Pedido {
   @Column('bool', { name: 'SEEN', nullable: false, default: false })
   seen: boolean;
 
+  @Column('decimal', {
+    name: 'TOTAL',
+    precision: 12,
+    scale: 2,
+    nullable: true,
+    default: 0,
+  })
+  total: number;
+
   @OneToMany(() => PedidoArticulo, (pedidoProducto) => pedidoProducto.pedido, {
     cascade: true,
   })

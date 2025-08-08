@@ -16,10 +16,11 @@ export class PedidoArticulo {
   @Column('decimal', {
     name: 'PRECIO',
     precision: 12,
-    scale: 4,
+    scale: 2,
     nullable: true,
+    default: 0,
   })
-  precio?: number;
+  precio: number;
 
   @Column('decimal', {
     name: 'IMPORTE',

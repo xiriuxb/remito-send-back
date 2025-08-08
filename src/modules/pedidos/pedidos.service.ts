@@ -40,7 +40,14 @@ export class PedidosService {
     await this.validateFrontIdOrThrow(dto.frontId);
     await this.validateProducts(dto.products);
 
-    const newPedido = await this._pedidoRepository.save(this.mapDto(dto));
+    const calculateTotal = dto.products.reduce(
+      (prev, curr) => (prev += curr.cantidad * curr.precio),
+      0,
+    );
+    const newPedido = await this._pedidoRepository.save({
+      ...this.mapDto(dto),
+      total: parseFloat(calculateTotal.toFixed(2)),
+    });
 
     return { id: newPedido.idPedido };
   }
@@ -68,7 +75,14 @@ export class PedidosService {
     const toCreate = uniqueIncoming
       .filter((obj) => !existingCodes.has(obj.frontId))
       .map((el) => {
-        return this.mapDto(el);
+        const total = el.products.reduce(
+          (prev, curr) => (prev += curr.cantidad * curr.precio),
+          0,
+        );
+        return {
+          ...this.mapDto(el),
+          total: parseFloat(total.toFixed(2)),
+        };
       });
     const created = await this._pedidoRepository.save(toCreate);
     return [
