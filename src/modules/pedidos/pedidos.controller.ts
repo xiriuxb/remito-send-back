@@ -10,7 +10,11 @@ import {
 } from '@nestjs/common';
 import { PedidosService } from './pedidos.service';
 import { CreateManyDto, CreatePedidoDto } from './dto/create-pedido.dto';
-import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
+import {
+  UpdatePedidoDto,
+  UpdateSeenPedidoDto,
+  UpdateStatusPedidoDto,
+} from './dto/update-pedido.dto';
 import { QueryPedidoDto } from './dto/get-query.dto';
 
 @Controller('pedidos')
@@ -45,6 +49,11 @@ export class PedidosController {
   @Patch(':id/seen')
   updateSeen(@Param('id') id: string, @Body() dto: UpdateSeenPedidoDto) {
     return this.pedidosService.updateSeen(+id, dto);
+  }
+
+  @Patch(':id/status')
+  updateStatus(@Param('id') id: string, @Body() dto: UpdateStatusPedidoDto) {
+    return this.pedidosService.updateStatus(+id, dto);
   }
 
   @Delete(':id')

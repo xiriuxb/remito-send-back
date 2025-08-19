@@ -11,13 +11,13 @@ import {
 } from 'class-validator';
 
 export class QueryCatalogProductDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maxLength: 60, minLength: 2 })
   @IsString()
   @MinLength(2)
   @IsOptional()
   @MaxLength(60)
   description?: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maximum: 99, minimum: 1 })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
@@ -29,7 +29,7 @@ export class QueryCatalogProductDto {
   @IsOptional()
   @MaxLength(15)
   cursor?: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maximum: 100, minimum: 1 })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
@@ -39,26 +39,26 @@ export class QueryCatalogProductDto {
 }
 
 export class QueryProductDto {
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maxLength: 60, minLength: 2 })
   @IsString()
   @MinLength(2)
   @IsOptional()
   @MaxLength(60)
   description?: string;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maximum: 99, minimum: 1 })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   @Max(99)
   rubro?: number;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, minimum: 1 })
   @IsInt()
   @Type(() => Number)
   @IsOptional()
   @IsPositive()
   page?: number;
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maximum: 100, minimum: 1 })
   @IsInt()
   @Type(() => Number)
   @IsOptional()

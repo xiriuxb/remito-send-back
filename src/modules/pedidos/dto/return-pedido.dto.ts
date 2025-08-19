@@ -46,7 +46,7 @@ export class ReturnOneAppPedidoDto {
   observation?: string;
   @ApiProperty()
   seen: boolean;
-  @Exclude()
+  @ApiProperty()
   status: string;
   @ApiProperty({ type: [ReturnPedidoProductDto] })
   @Type(() => ReturnPedidoProductDto)

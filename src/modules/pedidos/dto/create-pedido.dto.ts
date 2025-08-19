@@ -15,26 +15,26 @@ import {
 } from 'class-validator';
 
 export class ProductPedido {
-  @ApiProperty()
+  @ApiProperty({ maxLength: 15, minLength: 1 })
   @MinLength(1)
   @MaxLength(15)
   idArticulo: string;
 
-  @ApiProperty()
+  @ApiProperty({ maximum: 9999, minimum: 1 })
   @IsNumber()
   @IsInt()
   @IsPositive()
   @Max(9999)
   cantidad: number;
 
-  @ApiProperty()
+  @ApiProperty({ maxLength: 512, minLength: 1 })
   @IsOptional()
   @MinLength(1)
   @MaxLength(512)
   @Transform(({ value }) => value?.trim())
   observation?: string;
 
-  @ApiProperty()
+  @ApiProperty({ maximum: 9999999999.99, minimum: 0 })
   @IsNumber()
   @IsPositive()
   @Max(9999999999.99)
@@ -42,12 +42,12 @@ export class ProductPedido {
 }
 
 export class CreatePedidoDto {
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, maxLength: 128, minLength: 1 })
   @MinLength(1)
   @MaxLength(128)
   clientName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true, maxLength: 128, minLength: 1 })
   @IsOptional()
   @MinLength(1)
   @MaxLength(128)
@@ -63,7 +63,7 @@ export class CreatePedidoDto {
   @IsISO8601()
   fechaAlta: string;
 
-  @ApiProperty({ required: false })
+  @ApiProperty({ required: false, maxLength: 36, minLength: 1 })
   @IsString()
   @IsNotEmpty()
   @MaxLength(36)

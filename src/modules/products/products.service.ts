@@ -161,7 +161,7 @@ export class ProductsService {
     const products = await this._prodRepository.find({
       relations: ['rubro'],
       where: whereConditions,
-      order: { fechaAlta: 'DESC' },
+      order: { idRubro: 'ASC', fechaAlta: 'DESC' },
       select: this.publicSelectFields,
       take: limit + 1,
     });

@@ -11,7 +11,11 @@ import {
   CreatePedidoDto,
   ProductPedido,
 } from './dto/create-pedido.dto';
-import { UpdatePedidoDto, UpdateSeenPedidoDto } from './dto/update-pedido.dto';
+import {
+  UpdatePedidoDto,
+  UpdateSeenPedidoDto,
+  UpdateStatusPedidoDto,
+} from './dto/update-pedido.dto';
 import { ProductsService } from '../products/products.service';
 import { Pedido } from './entities/pedido.entity';
 import { QueryPedidoDto } from './dto/get-query.dto';
@@ -138,6 +142,7 @@ export class PedidosService {
         fechaPedido: true,
         seen: true,
         status: true,
+        total: true,
       },
       skip,
       take,
@@ -171,9 +176,11 @@ export class PedidosService {
         observation: true,
         seen: true,
         status: true,
+        total: true,
         productos: {
           idArticulo: true,
           cantidad: true,
+          precio: true,
           articulo: {
             descripcion: true,
           },
@@ -206,6 +213,15 @@ export class PedidosService {
   async updateSeen(id: number, dto: UpdateSeenPedidoDto) {
     await this.validateExistsOrThrow(id);
     await this._pedidoRepository.update({ idPedido: id }, { seen: dto.seen });
+    return { ok: true };
+  }
+
+  async updateStatus(id: number, dto: UpdateStatusPedidoDto) {
+    await this.validateExistsOrThrow(id);
+    await this._pedidoRepository.update(
+      { idPedido: id },
+      { status: dto.status },
+    );
     return { ok: true };
   }
 
