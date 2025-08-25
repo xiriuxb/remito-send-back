@@ -22,6 +22,7 @@ import {
   QueryProductDto,
 } from './dto/query-product.dto';
 import { FilesService } from '../files/files.service';
+import { PedidoArticulo } from '../pedidos/entities/pedido_articulos.entity';
 
 @Injectable()
 export class ProductsService {
@@ -39,6 +40,8 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly _prodRepository: Repository<Product>,
     private readonly _filesService: FilesService,
+    @InjectRepository(PedidoArticulo)
+    private readonly _pedidoProdRepository: Repository<PedidoArticulo>,
   ) {}
 
   async create(createProductDto: CreateProductDto, file?: Express.Multer.File) {
@@ -230,6 +233,17 @@ export class ProductsService {
 
   async remove(id: string) {
     const prod = await this.findOne(id);
+    if (!prod) {
+      throw new NotFoundException('Producto no encontrado');
+    }
+    const hasRelations = await this._pedidoProdRepository.count({
+      where: { idArticulo: id },
+    });
+    if (hasRelations) {
+      throw new ConflictException(
+        'El producto está asociado a uno o más pedidos.',
+      );
+    }
     if (prod.imagen) {
       await this._filesService.deleteImage(prod.imagen);
     }

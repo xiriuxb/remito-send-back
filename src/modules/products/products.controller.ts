@@ -38,9 +38,10 @@ export class ProductsController {
     @UploadedFile(
       new ParseFilePipe({
         validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 })],
+        fileIsRequired: false,
       }),
     )
-    file: Express.Multer.File,
+    file?: Express.Multer.File,
   ) {
     return this.productsService.create(createProductDto, file);
   }
