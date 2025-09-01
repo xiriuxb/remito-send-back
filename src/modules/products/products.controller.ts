@@ -21,6 +21,7 @@ import {
 } from './dto/query-product.dto';
 import { ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
 import {
+  CatalogResponseDto,
   PaginatedProductsCursorResponseDto,
   PaginatedProductsNormalResponseDto,
 } from './dto/catalog-response.dto';
@@ -50,6 +51,12 @@ export class ProductsController {
   @ApiOkResponse({ type: PaginatedProductsCursorResponseDto })
   findAllCatalog(@Query() queryParams: QueryCatalogProductDto) {
     return this.productsService.findAllCursorPaginated(queryParams);
+  }
+
+  @Get('/featured')
+  @ApiOkResponse({ type: CatalogResponseDto, isArray: true })
+  getFeaturedProducts() {
+    return this.productsService.getFeaturedProducts();
   }
 
   @Get()

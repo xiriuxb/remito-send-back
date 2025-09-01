@@ -34,6 +34,9 @@ export class ProductsService {
     precioVenta: true,
     imagen: true,
     fechaAlta: true,
+    detalle1: true,
+    costoNeto: true,
+    alicuotaIVA: true,
   };
 
   constructor(
@@ -240,15 +243,30 @@ export class ProductsService {
       where: { idArticulo: id },
     });
     if (hasRelations) {
-      throw new ConflictException(
-        'El producto está asociado a uno o más pedidos.',
-      );
+      await this.softDelete(id);
+      return { ok: true };
     }
     if (prod.imagen) {
       await this._filesService.deleteImage(prod.imagen);
     }
     await this._prodRepository.delete({ idArticulo: id });
     return { ok: true };
+  }
+
+  async softDelete(id: string) {
+    await this.findOne(id);
+    await this._prodRepository.update(id, { eliminado: true });
+    return { ok: true };
+  }
+
+  async getFeaturedProducts() {
+    const news = await this._prodRepository.find({
+      order: { fechaAlta: 'DESC' },
+      relations: ['rubro'],
+      select: this.publicSelectFields,
+      take: 15,
+    });
+    return plainToInstance(CatalogResponseDto, news);
   }
 
   async validateIdsExist(ids: string[]) {

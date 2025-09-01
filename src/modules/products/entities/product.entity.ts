@@ -148,6 +148,9 @@ export class Product {
   @Column('boolean', { name: 'ENLIQUIDA', nullable: true })
   enLiquidacion: boolean;
 
+  @Column('boolean', { name: 'ELIMINADO', default: false })
+  eliminado: boolean;
+
   //RELACIONES
   @OneToMany(
     () => PedidoArticulo,
