@@ -8,6 +8,7 @@ import { RubrosModule } from './modules/rubros/rubros.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { FilesModule } from './modules/files/files.module';
 import { PedidosModule } from './modules/pedidos/pedidos.module';
+import { FeaturedProductsModule } from './modules/featured-products/featured-products.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -22,6 +23,7 @@ import { PedidosModule } from './modules/pedidos/pedidos.module';
     CloudinaryModule,
     FilesModule,
     PedidosModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

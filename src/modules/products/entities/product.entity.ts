@@ -5,9 +5,11 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from 'typeorm';
 import { Rubro } from '../../rubros/entities/rubro.entity';
 import { PedidoArticulo } from 'src/modules/pedidos/entities/pedido_articulos.entity';
+import { FeaturedProduct } from 'src/modules/featured-products/entities/featured-products.entity';
 
 @Entity('articulos')
 export class Product {
@@ -158,4 +160,7 @@ export class Product {
     { cascade: true },
   )
   pedidosArticulo: PedidoArticulo[];
+
+  @OneToOne(() => FeaturedProduct, (featuredProduct) => featuredProduct.product)
+  featuredProduct: FeaturedProduct;
 }

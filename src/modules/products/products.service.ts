@@ -126,6 +126,16 @@ export class ProductsService {
     return whereConditions;
   }
 
+  //This is an special function to get all. Now is simple, can change
+  async findAllNoLimit() {
+    const products = await this._prodRepository.find({
+      relations: ['rubro'],
+      where: { eliminado: false },
+      select: this.publicSelectFields,
+    });
+    return plainToInstance(CatalogResponseDto, products);
+  }
+
   async findAll(queryDto: QueryProductDto) {
     const take = queryDto.take || 20;
     const page = queryDto.page || 1;
@@ -135,7 +145,7 @@ export class ProductsService {
 
     const [products, total] = await this._prodRepository.findAndCount({
       relations: ['rubro'],
-      where: whereConditions,
+      where: { eliminado: false, ...whereConditions },
       order: { fechaAlta: 'DESC' },
       select: this.publicSelectFields,
       skip,
@@ -166,7 +176,7 @@ export class ProductsService {
 
     const products = await this._prodRepository.find({
       relations: ['rubro'],
-      where: whereConditions,
+      where: { eliminado: false, ...whereConditions },
       order: { idRubro: 'ASC', fechaAlta: 'DESC' },
       select: this.publicSelectFields,
       take: limit + 1,
@@ -244,7 +254,6 @@ export class ProductsService {
     });
     if (hasRelations) {
       await this.softDelete(id);
-      return { ok: true };
     }
     if (prod.imagen) {
       await this._filesService.deleteImage(prod.imagen);
@@ -261,6 +270,7 @@ export class ProductsService {
 
   async getFeaturedProducts() {
     const news = await this._prodRepository.find({
+      where: { eliminado: false },
       order: { fechaAlta: 'DESC' },
       relations: ['rubro'],
       select: this.publicSelectFields,

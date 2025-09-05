@@ -59,6 +59,12 @@ export class ProductsController {
     return this.productsService.getFeaturedProducts();
   }
 
+  @Get('/all')
+  @ApiOkResponse({ type: CatalogResponseDto, isArray: true })
+  findAllNoLimit() {
+    return this.productsService.findAllNoLimit();
+  }
+
   @Get()
   @ApiOkResponse({ type: PaginatedProductsNormalResponseDto })
   findAll(@Query() queryParams: QueryProductDto) {
