@@ -15,7 +15,9 @@ export class FeaturedProduct {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @OneToOne(() => Product, (product) => product.featuredProduct)
+  @OneToOne(() => Product, (product) => product.featuredProduct, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn()
   product: Product;
 }
