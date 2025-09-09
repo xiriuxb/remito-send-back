@@ -9,10 +9,20 @@ async function bootstrap() {
   app.enableCors({ origin: '*' });
 
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Remito Send API')
+    .setDescription('API de Remito Send')
     .setVersion('1.0')
-    .addTag('cats')
+    .addBearerAuth()
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'x-authentication',
+        in: 'header',
+        description:
+          'Token JWT en header personalizado. Ej: Bearer <token> o <token>',
+      },
+      'x-authentication',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, documentFactory, {

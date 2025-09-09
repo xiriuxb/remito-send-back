@@ -11,6 +11,7 @@ import {
   UploadedFile,
   ParseFilePipe,
   MaxFileSizeValidator,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,13 +20,19 @@ import {
   QueryCatalogProductDto,
   QueryProductDto,
 } from './dto/query-product.dto';
-import { ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOkResponse,
+} from '@nestjs/swagger';
 import {
   CatalogResponseDto,
   PaginatedProductsCursorResponseDto,
   PaginatedProductsNormalResponseDto,
 } from './dto/catalog-response.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('products')
 export class ProductsController {
@@ -77,6 +84,8 @@ export class ProductsController {
   }
 
   @Patch(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiBody({ type: UpdateProductDto })
   update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
     return this.productsService.updateData(id, updateProductDto);
@@ -84,6 +93,8 @@ export class ProductsController {
 
   @Patch(':id/image')
   @UseInterceptors(FileInterceptor('imagen'))
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateImageDto })
   updateImage(
@@ -99,6 +110,8 @@ export class ProductsController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
   }

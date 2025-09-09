@@ -1,6 +1,15 @@
-import { Controller, Post, Delete, Param, Get, Body } from '@nestjs/common';
-import { ApiTags, ApiParam, ApiBody } from '@nestjs/swagger';
+import {
+  Controller,
+  Post,
+  Delete,
+  Param,
+  Get,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiTags, ApiParam, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { FeaturedProductService } from './featured-prducts.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @ApiTags('Featured Products')
 @Controller('featured-products')
@@ -10,12 +19,16 @@ export class FeaturedProductController {
   ) {}
 
   @Post()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiBody({ schema: { properties: { productId: { type: 'string' } } } })
   async addFeatured(@Body('productId') productId: string) {
     return this.featuredProductService.addFeatured(productId);
   }
 
   @Delete(':productId')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   @ApiParam({ name: 'productId', type: 'string' })
   async removeFeatured(@Param('productId') productId: string) {
     await this.featuredProductService.removeFeatured(productId);
@@ -23,6 +36,8 @@ export class FeaturedProductController {
   }
 
   @Delete()
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
   async clearAll() {
     await this.featuredProductService.clearAllFeatured();
     return { message: 'Todos los productos destacados eliminados' };
