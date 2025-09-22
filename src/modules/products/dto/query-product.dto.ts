@@ -24,6 +24,12 @@ export class QueryCatalogProductDto {
   @IsPositive()
   @Max(99)
   rubro?: number;
+  @ApiProperty({ required: false, maxLength: 12, minLength: 2 })
+  @IsString()
+  @MinLength(2)
+  @IsOptional()
+  @MaxLength(12)
+  idArticulo?: string;
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
@@ -45,6 +51,12 @@ export class QueryProductDto {
   @IsOptional()
   @MaxLength(60)
   description?: string;
+  @ApiProperty({ required: false, maxLength: 12, minLength: 2 })
+  @IsString()
+  @MinLength(2)
+  @IsOptional()
+  @MaxLength(12)
+  idArticulo?: string;
   @ApiProperty({ required: false, maximum: 99, minimum: 1 })
   @IsInt()
   @Type(() => Number)

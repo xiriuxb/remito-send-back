@@ -12,6 +12,7 @@ import {
   ParseFilePipe,
   MaxFileSizeValidator,
   UseGuards,
+  UploadedFiles,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -25,13 +26,14 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOkResponse,
+  ApiResponse,
 } from '@nestjs/swagger';
 import {
   CatalogResponseDto,
   PaginatedProductsCursorResponseDto,
   PaginatedProductsNormalResponseDto,
 } from './dto/catalog-response.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('products')
@@ -114,5 +116,51 @@ export class ProductsController {
   @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
+  }
+
+  @Post('upload-images-by-filename')
+  @UseInterceptors(FilesInterceptor('imagenes', 20)) // máximo 20 archivos
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiConsumes('multipart/form-data')
+  @ApiResponse({
+    status: 200,
+    description: 'Imágenes procesadas',
+    schema: {
+      type: 'object',
+      properties: {
+        ok: { type: 'boolean' },
+        results: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              productId: { type: 'string' },
+              success: { type: 'boolean' },
+              message: { type: 'string' },
+              imageUrl: { type: 'string', nullable: true },
+            },
+          },
+        },
+        summary: {
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            successful: { type: 'number' },
+            failed: { type: 'number' },
+          },
+        },
+      },
+    },
+  })
+  async uploadMultipleImagesByFilename(
+    @UploadedFiles(
+      new ParseFilePipe({
+        validators: [new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 5 })],
+      }),
+    )
+    files: Express.Multer.File[],
+  ) {
+    return this.productsService.uploadMultipleImagesByFilename(files);
   }
 }

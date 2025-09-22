@@ -12,8 +12,14 @@ async function bootstrap() {
     .setTitle('Remito Send API')
     .setDescription('API de Remito Send')
     .setVersion('1.0')
-    .addBearerAuth()
-    .addApiKey(
+    .addSecurity('x-authentication', {
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      in: 'header',
+      name: 'x-authentication',
+    })
+    .addBearerAuth(
       {
         type: 'apiKey',
         name: 'x-authentication',

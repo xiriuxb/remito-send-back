@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -117,6 +118,9 @@ export class ProductsService {
         ? ILike(`%${queryDto.description}%`)
         : undefined,
       idRubro: queryDto.rubro || undefined,
+      idArticulo: queryDto.idArticulo
+        ? ILike(`%${queryDto.idArticulo}%`)
+        : undefined,
     };
 
     if ('cursor' in queryDto && queryDto.cursor) {
@@ -302,5 +306,117 @@ export class ProductsService {
     // Rellenar con ceros a la izquierda hasta 5 caracteres
     const nextId = nextIdNumber.toString().padStart(5, '0');
     return nextId;
+  }
+
+  async uploadImageByFilename(file: Express.Multer.File) {
+    if (!file) {
+      throw new BadRequestException('No se proporcionó ninguna imagen');
+    }
+
+    // Extraer el ID del nombre del archivo (sin extensión)
+    const filename = file.originalname;
+    const productId = filename.split('.')[0]; // Obtiene la parte antes del primer punto
+
+    // Verificar si el producto existe
+    const product = await this._prodRepository.findOne({
+      where: { idArticulo: productId, eliminado: false },
+      select: { idArticulo: true, imagen: true },
+    });
+
+    if (!product) {
+      throw new NotFoundException(`Producto con ID ${productId} no encontrado`);
+    }
+
+    try {
+      // Validar la imagen
+      this._filesService.validateImage(file);
+
+      // Si el producto ya tiene una imagen, eliminar la anterior
+      if (product.imagen) {
+        try {
+          await this._filesService.deleteImage(product.imagen);
+        } catch (error) {
+          console.warn(
+            'No se pudo eliminar la imagen anterior:',
+            error.message,
+          );
+        }
+      }
+
+      // Subir la nueva imagen
+      const imageUrl = await this._filesService.uploadImage(file, productId);
+
+      // Actualizar el producto con la nueva URL de imagen
+      await this._prodRepository.update(productId, {
+        imagen: imageUrl,
+      });
+
+      return {
+        ok: true,
+        message: `Imagen actualizada correctamente para el producto ${productId}`,
+        productId,
+        imageUrl,
+      };
+    } catch (error) {
+      console.error('Error al procesar la imagen:', error.message);
+
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+
+      throw new BadRequestException(
+        'Error al procesar la imagen: ' + error.message,
+      );
+    }
+  }
+
+  async uploadMultipleImagesByFilename(files: Express.Multer.File[]) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No se proporcionaron imágenes');
+    }
+
+    const results = [];
+    let successful = 0;
+    let failed = 0;
+
+    // Procesar cada imagen
+    for (const file of files) {
+      const filename = file.originalname;
+      const productId = filename.split('.')[0];
+
+      try {
+        // Reutilizar la lógica del método individual
+        const result = await this.uploadImageByFilename(file);
+        results.push({
+          productId,
+          success: true,
+          message: `Imagen actualizada correctamente`,
+          imageUrl: result.imageUrl,
+        });
+        successful++;
+      } catch (error) {
+        results.push({
+          productId,
+          success: false,
+          message: error.message,
+          imageUrl: null,
+        });
+        failed++;
+        console.error(`Error procesando ${filename}:`, error.message);
+      }
+    }
+
+    return {
+      ok: true,
+      results,
+      summary: {
+        total: files.length,
+        successful,
+        failed,
+      },
+    };
   }
 }
