@@ -6,7 +6,14 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({ origin: '*' });
+  app.enableCors({
+    origin: '*', // o lista de dominios si lo necesitas más adelante
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: '*',
+    exposedHeaders: '*',
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Remito Send API')
